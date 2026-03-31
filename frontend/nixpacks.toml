@@ -1,8 +1,8 @@
-[variables]
-VITE_API_URL = "https://colosseum-production-fce9.up.railway.app"
+[phases.setup]
+nixPkgs = ["nodejs_20"]
 
 [phases.build]
-cmds = ["npm install", "npm run build"]
+cmds = ["npm install -g serve"]
 
 [start]
-cmd = "npx serve -s dist -p ${PORT:-3000}"
+cmd = "serve -s dist -p ${PORT:-3000}"
