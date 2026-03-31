@@ -8,7 +8,8 @@ if env_path.exists():
     load_dotenv(dotenv_path=env_path, override=True)
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import StreamingResponse, Response
+from fastapi.responses import StreamingResponse, Response, FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from models import get_available_models, call_model, _anthropic_key, _google_key, _openai_key
@@ -146,6 +147,22 @@ async def roleplay(req: RoleplayRequest):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+# -- Static frontend serving (monorepo) ----------------------------------------
+
+STATIC_DIR = Path(__file__).parent / "static"
+if STATIC_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=str(STATIC_DIR / "assets")), name="static-assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Try serving a static file first
+        file_path = STATIC_DIR / full_path
+        if full_path and file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+        # Fall back to index.html for SPA routing
+        return FileResponse(STATIC_DIR / "index.html")
 
 
 if __name__ == "__main__":

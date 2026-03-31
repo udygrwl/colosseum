@@ -1,6 +1,3 @@
-const API_BASE = import.meta.env.VITE_API_URL || (
-  typeof window !== 'undefined' && window.location.hostname.includes('railway.app')
-    ? 'https://colosseum-production-fce9.up.railway.app'
-    : 'http://localhost:8000'
-)
+// In monorepo mode, API is served from the same origin (no CORS needed)
+const API_BASE = import.meta.env.VITE_API_URL || ''
 export default API_BASE
