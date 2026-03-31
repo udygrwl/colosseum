@@ -16,28 +16,35 @@ AVAILABLE_MODELS = [
     {"id": "gemini-2.5-flash",            "name": "Gemini 2.5 Flash",            "provider": "google",    "thinking": True,  "reasoning": False},
     {"id": "gemini-2.0-flash",            "name": "Gemini 2.0 Flash",            "provider": "google",    "thinking": False, "reasoning": False},
     {"id": "gemini-1.5-pro",              "name": "Gemini 1.5 Pro",              "provider": "google",    "thinking": False, "reasoning": False},
-    # ── OpenAI — GPT-5 series ─────────────────────────────────────────────────
+    # ── OpenAI — GPT-5.4 (latest) ────────────────────────────────────────────
     {"id": "gpt-5.4",                     "name": "GPT-5.4",                     "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-5.4-pro",                 "name": "GPT-5.4 Pro",                 "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-5.4-mini",                "name": "GPT-5.4 Mini",                "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-5.4-nano",                "name": "GPT-5.4 Nano",                "provider": "openai",    "thinking": False, "reasoning": False},
-    {"id": "gpt-5.3",                     "name": "GPT-5.3",                     "provider": "openai",    "thinking": False, "reasoning": False},
+    # ── OpenAI — GPT-5.3 / 5.2 / 5.1 / 5.0 ─────────────────────────────────
+    {"id": "gpt-5.3-chat-latest",         "name": "GPT-5.3",                     "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-5.2",                     "name": "GPT-5.2",                     "provider": "openai",    "thinking": False, "reasoning": False},
-    # ── OpenAI — GPT-4 series ─────────────────────────────────────────────────
+    {"id": "gpt-5.2-pro",                 "name": "GPT-5.2 Pro",                 "provider": "openai",    "thinking": False, "reasoning": False},
+    {"id": "gpt-5.1",                     "name": "GPT-5.1",                     "provider": "openai",    "thinking": False, "reasoning": False},
+    {"id": "gpt-5",                       "name": "GPT-5",                       "provider": "openai",    "thinking": False, "reasoning": False},
+    {"id": "gpt-5-pro",                   "name": "GPT-5 Pro",                   "provider": "openai",    "thinking": False, "reasoning": False},
+    {"id": "gpt-5-mini",                  "name": "GPT-5 Mini",                  "provider": "openai",    "thinking": False, "reasoning": False},
+    # ── OpenAI — GPT-4 series ────────────────────────────────────────────────
     {"id": "gpt-4.1",                     "name": "GPT-4.1",                     "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-4.1-mini",                "name": "GPT-4.1 Mini",                "provider": "openai",    "thinking": False, "reasoning": False},
+    {"id": "gpt-4.1-nano",                "name": "GPT-4.1 Nano",                "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-4o",                      "name": "GPT-4o",                      "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-4o-mini",                 "name": "GPT-4o Mini",                 "provider": "openai",    "thinking": False, "reasoning": False},
     # ── OpenAI — o-series ────────────────────────────────────────────────────
-    {"id": "o3",                          "name": "O3",                          "provider": "openai",    "thinking": False, "reasoning": True},
-    {"id": "o3-pro",                      "name": "O3 Pro",                      "provider": "openai",    "thinking": False, "reasoning": True},
-    {"id": "o3-mini",                     "name": "O3 Mini",                     "provider": "openai",    "thinking": False, "reasoning": True},
     {"id": "o4-mini",                     "name": "O4 Mini",                     "provider": "openai",    "thinking": False, "reasoning": True},
+    {"id": "o3",                          "name": "O3",                          "provider": "openai",    "thinking": False, "reasoning": True},
+    {"id": "o3-mini",                     "name": "O3 Mini",                     "provider": "openai",    "thinking": False, "reasoning": True},
+    {"id": "o1-pro",                      "name": "O1 Pro",                      "provider": "openai",    "thinking": False, "reasoning": True},
     {"id": "o1",                          "name": "O1",                          "provider": "openai",    "thinking": False, "reasoning": True},
     {"id": "o1-mini",                     "name": "O1 Mini",                     "provider": "openai",    "thinking": False, "reasoning": True},
 ]
 
-OPENAI_REASONING_MODELS = {"o1", "o1-mini", "o3", "o3-mini", "o3-pro", "o4-mini"}
+OPENAI_REASONING_MODELS = {"o1", "o1-mini", "o1-pro", "o3", "o3-mini", "o4-mini"}
 
 
 def get_available_models():

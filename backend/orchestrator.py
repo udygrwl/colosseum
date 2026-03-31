@@ -21,6 +21,11 @@ async def run_debate(
     def cm(model_id, prompt):
         return call_model(model_id, prompt, use_thinking=use_thinking)
 
+    def safe_result(r, model_id):
+        if isinstance(r, Exception):
+            return f"[Error: {type(r).__name__}: {r}]"
+        return r
+
     # ── Round 0: initial positions ──────────────────────────────────────────
     yield sse_event("status", {"round": 0, "message": "Round 0: Generating initial positions..."})
 
@@ -28,9 +33,14 @@ async def run_debate(
         cm(model_a, ROUND_0_PROMPT.format(topic=topic)),
         cm(model_b, ROUND_0_PROMPT.format(topic=topic)),
         cm(model_c, ROUND_0_PROMPT.format(topic=topic)),
+        return_exceptions=True,
     )
 
-    positions = {model_a: round0_results[0], model_b: round0_results[1], model_c: round0_results[2]}
+    positions = {
+        model_a: safe_result(round0_results[0], model_a),
+        model_b: safe_result(round0_results[1], model_b),
+        model_c: safe_result(round0_results[2], model_c),
+    }
 
     yield sse_event("round0", {
         "round": 0,
@@ -54,9 +64,14 @@ async def run_debate(
         cm(model_a, critique_prompt(model_b, model_c)),
         cm(model_b, critique_prompt(model_a, model_c)),
         cm(model_c, critique_prompt(model_a, model_b)),
+        return_exceptions=True,
     )
 
-    critiques = {model_a: round1_results[0], model_b: round1_results[1], model_c: round1_results[2]}
+    critiques = {
+        model_a: safe_result(round1_results[0], model_a),
+        model_b: safe_result(round1_results[1], model_b),
+        model_c: safe_result(round1_results[2], model_c),
+    }
 
     yield sse_event("round1", {
         "round": 1,
@@ -86,9 +101,14 @@ async def run_debate(
         cm(model_a, revision_prompt(model_a, model_b, model_c)),
         cm(model_b, revision_prompt(model_b, model_a, model_c)),
         cm(model_c, revision_prompt(model_c, model_a, model_b)),
+        return_exceptions=True,
     )
 
-    revisions = {model_a: round2_results[0], model_b: round2_results[1], model_c: round2_results[2]}
+    revisions = {
+        model_a: safe_result(round2_results[0], model_a),
+        model_b: safe_result(round2_results[1], model_b),
+        model_c: safe_result(round2_results[2], model_c),
+    }
 
     yield sse_event("round2", {
         "round": 2,
