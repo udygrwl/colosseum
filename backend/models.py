@@ -10,7 +10,6 @@ AVAILABLE_MODELS = [
     {"id": "claude-3-7-sonnet-20250219",  "name": "Claude 3.7 Sonnet",           "provider": "anthropic", "thinking": True,  "reasoning": False},
     {"id": "claude-haiku-4-5-20251001",   "name": "Claude Haiku 4.5",            "provider": "anthropic", "thinking": False, "reasoning": False},
     {"id": "claude-3-5-sonnet-20241022",  "name": "Claude 3.5 Sonnet",           "provider": "anthropic", "thinking": False, "reasoning": False},
-    {"id": "claude-3-5-haiku-20241022",   "name": "Claude 3.5 Haiku",            "provider": "anthropic", "thinking": False, "reasoning": False},
     # ── Google ───────────────────────────────────────────────────────────────
     {"id": "gemini-3.1-pro-preview",      "name": "Gemini 3.1 Pro (Preview)",    "provider": "google",    "thinking": False, "reasoning": False},
     {"id": "gemini-3-pro-preview",        "name": "Gemini 3 Pro (Preview)",      "provider": "google",    "thinking": False, "reasoning": False},
@@ -127,7 +126,7 @@ async def call_anthropic(model_id: str, prompt: str, use_thinking: bool, max_tok
 async def call_google(model_id: str, prompt: str, use_thinking: bool, max_tokens: Optional[int]) -> str:
     from google import genai
     from google.genai import types
-    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    api_key = (os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or "").strip()
     client = genai.Client(api_key=api_key)
 
     effective_tokens = max_tokens or (8192 if use_thinking else 4096)
