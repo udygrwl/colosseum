@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "/Users/udaygrewal/Desktop/athena-poc/.venv/bin/uvicorn",
+      "runtimeArgs": ["main:app", "--reload", "--port", "8000"],
+      "cwd": "/Users/udaygrewal/Desktop/athena-poc/backend",
+      "port": 8000
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/udaygrewal/Desktop/athena-poc/frontend",
+      "port": 5173
+    }
+  ]
+}
