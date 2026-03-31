@@ -20,6 +20,7 @@ AVAILABLE_MODELS = [
     {"id": "o3",                          "name": "O3",                          "provider": "openai",    "thinking": False, "reasoning": True},
     {"id": "o3-mini",                     "name": "O3 Mini",                     "provider": "openai",    "thinking": False, "reasoning": True},
     {"id": "o1",                          "name": "O1",                          "provider": "openai",    "thinking": False, "reasoning": True},
+    {"id": "gpt-4.5-preview",             "name": "GPT-4.5",                     "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-4o",                      "name": "GPT-4o",                      "provider": "openai",    "thinking": False, "reasoning": False},
     {"id": "gpt-4o-mini",                 "name": "GPT-4o Mini",                 "provider": "openai",    "thinking": False, "reasoning": False},
 ]
