@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { ThemeProvider } from './context/ThemeContext'
-import Header from './components/Header'
-import AnalysisPanel from './components/AnalysisPanel'
-import RoleplayStage from './components/RoleplayStage'
+import NavBar from './components/NavBar'
+import OverseerPanel from './components/OverseerPanel'
+import ArenaMode from './components/ArenaMode'
+import RoleplayMode from './components/RoleplayMode'
 import API_BASE from './config'
 
 function AppInner() {
+  const [mode, setMode] = useState('arena')
   const [models, setModels] = useState([])
-  const [transcript, setTranscript] = useState('')
+  const [overseerContext, setOverseerContext] = useState('')
 
   useEffect(() => {
     fetch(`${API_BASE}/api/models`)
@@ -16,25 +18,32 @@ function AppInner() {
       .catch(() => {})
   }, [])
 
-  const handleTranscriptChange = (text) => {
-    setTranscript(text)
+  // Clear overseer context when switching modes
+  const handleModeChange = (newMode) => {
+    setMode(newMode)
+    setOverseerContext('')
   }
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50 dark:bg-dark-bg overflow-hidden">
-      <Header />
+    <div className="flex flex-col h-screen bg-slate-50 dark:bg-[#0f1117] overflow-hidden">
+      <NavBar mode={mode} onModeChange={handleModeChange} />
+
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* Left: Analysis Panel */}
+        {/* Left: Overseer Panel */}
         <div className="w-[380px] flex-shrink-0 flex flex-col overflow-hidden">
-          <AnalysisPanel models={models} transcript={transcript} />
+          <OverseerPanel models={models} context={overseerContext} />
         </div>
 
         {/* Divider */}
-        <div className="w-px bg-slate-200 dark:bg-white/10 flex-shrink-0" />
+        <div className="w-px bg-slate-200 dark:bg-slate-800 flex-shrink-0" />
 
-        {/* Right: Roleplay Stage */}
+        {/* Right: Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          <RoleplayStage models={models} onTranscriptChange={handleTranscriptChange} />
+          {mode === 'arena' ? (
+            <ArenaMode models={models} onResponsesChange={setOverseerContext} />
+          ) : (
+            <RoleplayMode models={models} onTranscriptChange={setOverseerContext} />
+          )}
         </div>
       </div>
     </div>

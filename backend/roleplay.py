@@ -13,8 +13,10 @@ async def run_roleplay(
     """
     Orchestrates the roleplay, yielding SSE-formatted strings.
     Each character takes turns responding to the conversation so far.
+    Uses call_model(model_id, prompt, max_tokens) with a single combined prompt.
     """
     num_chars = len(characters)
+
     # Build system prompts per character
     system_prompts = []
     for i, char in enumerate(characters):
@@ -26,13 +28,11 @@ async def run_roleplay(
             )
         )
 
-    # conversation_history is from perspective of each model separately
-    # We maintain a shared flat log for context
-    shared_log = []  # [{role, content, character, model}]
+    shared_log = []  # [{content, character, model, char_idx}]
 
     turn = 0
     current_char_idx = 0
-    end_votes = set()  # char indices that have signalled /end
+    end_votes = set()
 
     while True:
         if max_turns is not None and turn >= max_turns:
@@ -42,21 +42,28 @@ async def run_roleplay(
         char = characters[current_char_idx]
         system = system_prompts[current_char_idx]
 
-        # Build messages for this model: all prior turns as user/assistant
-        # This model sees itself as "assistant" and others as "user"
-        messages = _build_messages_for_char(shared_log, current_char_idx, num_chars)
+        # Build a single prompt string combining system prompt + conversation history
+        prompt_parts = [system, ""]
 
-        # Add a user prompt to kick off if it's the first turn
-        if not messages:
-            messages = [{"role": "user", "content": f"The scenario begins. You go first. Scenario: {scenario}"}]
+        if not shared_log:
+            prompt_parts.append(f"The scenario begins. You go first. Scenario: {scenario}")
+        else:
+            prompt_parts.append("Conversation so far:")
+            for entry in shared_log:
+                is_self = entry["char_idx"] == current_char_idx
+                label = "You" if is_self else entry["character"]
+                prompt_parts.append(f"[{label}]: {entry['content']}")
+            prompt_parts.append("")
+            prompt_parts.append("Now respond in character. Stay brief and snappy:")
+
+        prompt = "\n".join(prompt_parts)
 
         try:
-            response_text = await call_model(char["model"], system, messages)
+            response_text = await call_model(char["model"], prompt, max_tokens=300)
         except Exception as e:
             yield _sse({"type": "error", "message": str(e)})
             return
 
-        # Clean up response
         response_text = response_text.strip()
 
         # Check for /end vote
@@ -67,7 +74,6 @@ async def run_roleplay(
             end_votes.add(current_char_idx)
 
         shared_log.append({
-            "role": "assistant",
             "content": clean_text,
             "character": char.get("character_name", f"Character {current_char_idx+1}"),
             "model": char["model"],
@@ -83,7 +89,6 @@ async def run_roleplay(
             "end_vote": has_end,
         })
 
-        # End only when all characters have voted /end
         if len(end_votes) == num_chars:
             yield _sse({"type": "ended", "reason": "unanimous"})
             return
@@ -91,53 +96,7 @@ async def run_roleplay(
         turn += 1
         current_char_idx = (current_char_idx + 1) % num_chars
 
-        # Small delay to avoid hammering APIs
         await asyncio.sleep(0.1)
-
-
-def _build_messages_for_char(shared_log: list, char_idx: int, num_chars: int) -> list:
-    """
-    Build the message history from the perspective of the given character.
-    That character's turns = assistant, all others = user (combined into one message per turn).
-    """
-    if not shared_log:
-        return []
-
-    messages = []
-    current_role = None
-    current_content_parts = []
-
-    for entry in shared_log:
-        is_self = entry["char_idx"] == char_idx
-        role = "assistant" if is_self else "user"
-
-        if role != current_role:
-            if current_role is not None:
-                messages.append({
-                    "role": current_role,
-                    "content": "\n".join(current_content_parts)
-                })
-            current_role = role
-            current_content_parts = []
-
-        prefix = "" if is_self else f"[{entry['character']}]: "
-        current_content_parts.append(f"{prefix}{entry['content']}")
-
-    if current_role is not None:
-        messages.append({
-            "role": current_role,
-            "content": "\n".join(current_content_parts)
-        })
-
-    # OpenAI/Anthropic require starting with user message
-    if messages and messages[0]["role"] == "assistant":
-        messages.insert(0, {"role": "user", "content": f"[Scene begins]"})
-
-    # Ensure last message is user (so the model responds as assistant)
-    if messages and messages[-1]["role"] == "assistant":
-        messages.append({"role": "user", "content": "[Continue the scene]"})
-
-    return messages
 
 
 def _sse(data: dict) -> str:
