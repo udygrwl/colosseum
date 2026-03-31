@@ -22,7 +22,7 @@ export default function App() {
     fetch(`${API}/api/models`)
       .then(r => r.json())
       .then(d => setModels(d.models))
-      .catch(() => setModelsError('Could not reach backend on port 8000.'))
+      .catch(() => setModelsError(`Could not reach backend at ${API}. Make sure the backend is running.`))
   }, [])
 
   // ── debate state ───────────────────────────────────────────────────────────
