@@ -1,11 +1,24 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Enable class-based dark mode — add/remove `.dark` on <html> */
-@variant dark (&:where(.dark, .dark *));
+* {
+  box-sizing: border-box;
+}
 
-*, *::before, *::after { box-sizing: border-box; }
-
-body {
+html, body, #root {
+  height: 100%;
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  padding: 0;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D97706;
+  border-radius: 3px;
 }

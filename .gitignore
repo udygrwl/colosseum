@@ -1,14 +1,13 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+*.pyc
+__pycache__/
+
 # Environment / secrets
 .env
-*.env.local
-
-# Python
-backend/.venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
+backend/.env
 
 # Node
 frontend/node_modules/
