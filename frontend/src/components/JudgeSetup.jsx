@@ -20,7 +20,7 @@ export default function JudgeSetup({ models, onStart }) {
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-8 space-y-6 text-center">
       <div>
-        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-1">Athena</h2>
+        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-1">Colosseum</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Start by choosing a judge. You'll discuss your topic together before the debate begins.
         </p>
