@@ -1,8 +1,11 @@
 [phases.setup]
 nixPkgs = ["nodejs_20"]
 
+[phases.install]
+cmds = ["npm install serve"]
+
 [phases.build]
-cmds = ["npm install -g serve"]
+cmds = ["echo 'Skipping build — using pre-built dist/'"]
 
 [start]
-cmd = "serve -s dist -p ${PORT:-3000}"
+cmd = "npx serve -s dist -p ${PORT:-3000}"
