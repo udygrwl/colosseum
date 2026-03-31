@@ -67,7 +67,7 @@ def list_models():
 @app.get("/api/health")
 def health():
     from models import _anthropic_key, _google_key, _openai_key
-    def key_info(k): return {"set": bool(k), "length": len(k), "prefix": k[:8] if k else ""}
+    def key_info(k): return {"set": bool(k), "length": len(k), "prefix": k[:8] if k else "", "suffix": k[-6:] if k else ""}
     return {
         "anthropic": key_info(_anthropic_key()),
         "google":    key_info(_google_key()),
