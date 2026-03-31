@@ -5,7 +5,8 @@ const ThemeContext = createContext()
 export function ThemeProvider({ children }) {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('colosseum-theme')
-    return saved ? saved === 'dark' : true
+    if (saved) return saved === 'dark'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
 
   useEffect(() => {
