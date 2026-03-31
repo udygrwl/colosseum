@@ -49,13 +49,23 @@ def openai_uses_completion_tokens(model_id: str) -> bool:
     return model_id in OPENAI_REASONING_MODELS or model_id.startswith("gpt-5")
 
 
+def _anthropic_key() -> str:
+    return (os.getenv("ANTHROPIC_API_KEY") or os.getenv("ANTHOPIC_KEY") or "").strip()
+
+def _google_key() -> str:
+    return (os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or "").strip()
+
+def _openai_key() -> str:
+    return (os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_KEY") or "").strip()
+
+
 def get_available_models():
     available = []
     for model in AVAILABLE_MODELS:
         key_ok = (
-            (model["provider"] == "anthropic" and os.getenv("ANTHROPIC_API_KEY")) or
-            (model["provider"] == "google"    and (os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY"))) or
-            (model["provider"] == "openai"    and os.getenv("OPENAI_API_KEY"))
+            (model["provider"] == "anthropic" and _anthropic_key()) or
+            (model["provider"] == "google"    and _google_key()) or
+            (model["provider"] == "openai"    and _openai_key())
         )
         if key_ok:
             available.append(model)
@@ -102,7 +112,7 @@ async def call_model(
 
 async def call_anthropic(model_id: str, prompt: str, use_thinking: bool, max_tokens: Optional[int]) -> str:
     import anthropic
-    client = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = anthropic.AsyncAnthropic(api_key=_anthropic_key())
 
     if use_thinking and model_supports_thinking(model_id):
         effective_tokens = max_tokens or 16000
@@ -126,8 +136,7 @@ async def call_anthropic(model_id: str, prompt: str, use_thinking: bool, max_tok
 async def call_google(model_id: str, prompt: str, use_thinking: bool, max_tokens: Optional[int]) -> str:
     from google import genai
     from google.genai import types
-    api_key = (os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or "").strip()
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key=_google_key())
 
     effective_tokens = max_tokens or (8192 if use_thinking else 4096)
 
@@ -151,7 +160,7 @@ async def call_google(model_id: str, prompt: str, use_thinking: bool, max_tokens
 
 async def call_openai(model_id: str, prompt: str, max_tokens: Optional[int]) -> str:
     from openai import AsyncOpenAI
-    client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = AsyncOpenAI(api_key=_openai_key())
     use_completion_tokens = openai_uses_completion_tokens(model_id)
 
     kwargs = dict(model=model_id, messages=[{"role": "user", "content": prompt}])
